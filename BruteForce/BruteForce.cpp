@@ -9,8 +9,8 @@
 #include <chrono>
 using namespace std;
 
-string path="./../../../DLA Mock Catalogue/";
-string path2="./../Data/";
+//string path="./../../../DLA Mock Catalogue/";
+string path="./../Data/";
 vector<string> fileNames{"DLAhost_snap49_r1_b1 (copy).txt","DLAhost_snap49_r1_b1alpha (copy).txt","DLAhost_snap49_r1_b1T10 (copy).txt"};
 double boxsize=150.0;
 
