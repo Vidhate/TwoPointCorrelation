@@ -7,7 +7,7 @@ names=["DLAhost_snap49_r1_b1 (copy).txt","DLAhost_snap49_r1_b1alpha (copy).txt",
 
 for name in names:
 	pos=[]
-	fname=path+name
+	fname=path2+name
 	with open(fname) as f:
 		for line in f:
 			if line[0]!='#':
