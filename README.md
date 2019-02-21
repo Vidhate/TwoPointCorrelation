@@ -28,4 +28,5 @@ To run for your own data sets please note the following things:
 </ul>
   
 ## Output
-The output from each technique will be stored in the same directory which holds the code, with the same name as the input file name prefixed with an appropriate abbreviation of the technique.
+The output of correlation values found from each technique will be stored in the same directory which holds the code as txt files, with the same name as the input file name prefixed with an appropriate abbreviation of the technique.<br>
+The output of comparison plots is stored in the folder "Comparison Plots". The prefix "setX" can be changed in the code.
