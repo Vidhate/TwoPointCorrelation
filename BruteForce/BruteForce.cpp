@@ -12,7 +12,14 @@ using namespace std;
 //string path="./../../../DLA Mock Catalogue/";
 string path="./../Data/";
 vector<string> fileNames{"DLAhost_snap49_r1_b1 (copy).txt","DLAhost_snap49_r1_b1alpha (copy).txt","DLAhost_snap49_r1_b1T10 (copy).txt"};
-double boxsize=150.0;
+double boxsize=150.0;	// Size of the simulation box in MPc/h
+double numPart=1024.0;	// The number of particles used for the simulation will be cube of this number.
+double forceRes=(boxsize/numPart)/30;	// Force resolution used in the simulation is 1/30th of mean inter-particle spacing.
+double minLength=10.0*forceRes;	// The smallest bin should start from this length. minLength~ 5 to 10 times forceRes.
+double maxLength=boxsize/4.0; /*The maximum length upto which bins should be split is 1/5th to 1/10th the size of the box for the following reasons:
+- The boxes are periodic and any separation more than L/2 will require accessing other periodic boxes beyond the current one.
+- Of the available perturbation modes in the box, the K_min(biggest wavelength)= 2*pi/boxlength. There are modes below this but they are constrained by the size of the simulation box. Hence, another maxlength cutoff on length greater than K_min ~ L/(5 to 10)
+Being very flexible with this, I take the factor 4 for this run.*/
 
 /*
 Correlation structure holds the bincenter values and the correlation value at those bins. These can be plotted directly. These will be output in a file  for wasier plotting using python tools.
@@ -100,49 +107,63 @@ vector<vector<double> > readFile(int index=-1,string inpFileName=""){
 	return pos;
 }
 
+// Returns the smaller of 2 doubles
+double min(double a, double b){
+	double ans=a<b?a:b;
+	return ans;
+}
+
 /*
-This function finds the absolute euclidean distance or separation between two points p1 and p2 in N-Dimensional space.
+This function finds the absolute euclidean distance or separation between two points p1 and p2 in N-Dimensional space with considerations of a periodic box.
 N will be found from the length of points p1 and p2.
 Returns the separation between points.
+Formula for 1D: dl=min(abs(x2-x1),L-abs(x2-x1)) 	| where L is the length of the periodic box.
 */
 double separation(vector<double> p1, vector<double> p2){
-	if(p1.size()!=p2.size()){
+	if(p1.size()!=p2.size() || p1.size()==0 || p2.size()==0){
 		cout<<"Inconsistent dimensions of 2 points while calculating separation\n";
 		exit(0);
 	}
 
-	double eucl_dist=0.0;
+	double p_distance=0.0;
 	for(int i=0;i<p1.size();i++){
-		eucl_dist+=pow(p2.at(i)-p1.at(i),2.0);
+		double dl=abs(p2.at(i)-p1.at(i));
+		p_distance+=pow(min(dl,boxsize-dl),2);
 	}
-	return sqrt(eucl_dist);
+	return sqrt(p_distance);
 }
 
 /*
-(maxLength=boxsize*sqrt(3) because the largest distance by which two points can be separated is along principle diagonal of the cube)
 If no input in given on bin width then a default number of bins are considered: nBins=maxLength/2 | dR=2.0
-Bin centering is done when maxLength/dR is not a wholenumber. Bin centering means number of bins created are: nBins=int(maxLength/dR) beginning from 0.0. Then each bin is shifted by (maxLength-(dR*nBins))/2.0 towards the right (the value is "added" to each bin boundary) so that the bins are centered over the total interval [0.0,maxLength].
+Bins can be split linearly or logarithmically according to the parameter passed: "lin"=linear | "log"=logarithmic. Default is logarithmic.
 */
-vector<double> createBins(double dR=2.0){
-	double maxLength=boxsize*sqrt(3.0);
+vector<double> createBins(double dR=2.0, string mode="log", int numOfBins=30){
+	if(mode!="log" && mode!="lin"){
+		cout<<"The mode selected for splitting the bins in unavailable or wrong. Please recheck the spelling/availability\n";
+		exit(0);
+	}
 
-	// Creating bins
 	if(dR>maxLength){
 		cout<<"Bin width larger than available box. Please rectify and run again\n";
 		exit(0);
 	}
 
 	vector<double> bins;
-	int nBins=maxLength/dR;
-	double offset=(maxLength-(dR*nBins))/2.0;
-	if(offset<0.0){
-		cout<<"Offset negetive. Check Code.\n";
-		exit(0);
-	}
-	double mark=0.0+offset;
-	for(int i=0;i<nBins;i++){
-		bins.push_back(mark);
-		mark+=dR;
+	if(mode=="lin"){
+		int nBins=(maxLength-minLength)/dR;
+		double mark=minLength;
+		for(int i=0;i<nBins;i++){
+			bins.push_back(mark);
+			mark+=dR;
+		}
+	}else{
+		double limit=log10(maxLength/minLength);
+		double mark=0.0;
+		double step=limit/double(numOfBins-1);		// To create n bins between [0,x] the step should be x/n
+		for(int i=0;i<numOfBins;i++){
+			bins.push_back(minLength*pow(10,mark));
+			mark+=step;
+		}
 	}
 	return bins;
 }
@@ -155,6 +176,7 @@ int findBin(double sep, vector<double> bins){
 	int lo=0;
 	int hi=bins.size()-1;
 	int mid;
+	if(sep>bins.at(hi)){return -1;}
 	while(lo<=hi){
 		mid=(lo+hi)/2;
 		if(sep>=bins[mid] && sep<bins[mid+1]){
@@ -226,9 +248,8 @@ vector<double> countsBruteForce(vector<vector<double> > positions, vector<vector
 	auto stopBF=chrono::high_resolution_clock::now();
 	auto duration=chrono::duration_cast<chrono::seconds>(stopBF - startBF);
 
-	cout<<endl;
-	cout<<"Brute Force pair counts done successfully"<<endl;
-	cout<<"Time taken to accomplish : "<<duration.count()<<" seconds"<<endl;
+	cout<<"Brute Force pair counts done successfully\n";
+	cout<<"Time taken to accomplish : "<<duration.count()<<" seconds\n";
 
 	return DDbyRR;
 }
@@ -283,8 +304,9 @@ void writeResult(Correlation result, int index){
 		outfile<<result.centeredBinValues.at(i)<<" "<<result.correlationValue_BF.at(i)<<"\n";
 	}
 	outfile.close();
-	cout<<"Successfully written to Output file"<<endl;
+	cout<<"Successfully written to Output file\n\n";
 }
+
 
 int main(){
 	Correlation result[fileNames.size()];
