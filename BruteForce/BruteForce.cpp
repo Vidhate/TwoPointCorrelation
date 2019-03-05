@@ -102,15 +102,15 @@ vector<vector<double> > readFile(int index=-1,string inpFileName=""){
 		}
 	}
 	file.close();
-	sort(pos.begin(),pos.end());
+//	sort(pos.begin(),pos.end());
 	cout<<"File read successfully"<<endl;
 	return pos;
 }
 
 // Returns the smaller of 2 doubles
 double min(double a, double b){
-	double ans=a<b?a:b;
-	return ans;
+	if(a<b)return a;
+	else return b;
 }
 
 /*
@@ -118,6 +118,7 @@ This function finds the absolute euclidean distance or separation between two po
 N will be found from the length of points p1 and p2.
 Returns the separation between points.
 Formula for 1D: dl=min(abs(x2-x1),L-abs(x2-x1)) 	| where L is the length of the periodic box.
+Available in 2 modes - periodic | normal
 */
 double separation(vector<double> p1, vector<double> p2){
 	if(p1.size()!=p2.size() || p1.size()==0 || p2.size()==0){
@@ -130,6 +131,12 @@ double separation(vector<double> p1, vector<double> p2){
 		double dl=abs(p2.at(i)-p1.at(i));
 		p_distance+=pow(min(dl,boxsize-dl),2);
 	}
+
+/*
+	for(int i=0;i<p1.size();i++){
+		p_distance+=pow(p2.at(i)-p1.at(i),2);
+	}	
+*/
 	return sqrt(p_distance);
 }
 
@@ -149,6 +156,7 @@ vector<double> createBins(double dR=2.0, string mode="log", int numOfBins=30){
 	}
 
 	vector<double> bins;
+	
 	if(mode=="lin"){
 		int nBins=(maxLength-minLength)/dR;
 		double mark=minLength;
@@ -156,15 +164,18 @@ vector<double> createBins(double dR=2.0, string mode="log", int numOfBins=30){
 			bins.push_back(mark);
 			mark+=dR;
 		}
-	}else{
+	}
+
+	if(mode=="log"){
 		double limit=log10(maxLength/minLength);
 		double mark=0.0;
-		double step=limit/double(numOfBins-1);		// To create n bins between [0,x] the step should be x/n
+		double step=limit/double(numOfBins-1);		// To create n bins between [0,x] the step should be x/(n-1)
 		for(int i=0;i<numOfBins;i++){
 			bins.push_back(minLength*pow(10,mark));
 			mark+=step;
 		}
 	}
+
 	return bins;
 }
 
@@ -207,8 +218,66 @@ void randomDistribution(vector<vector<double> > &posRR, long long n){
 		}
 		posRR.push_back(bufferRR);
 	}
-	sort(posRR.begin(),posRR.end());
+//	sort(posRR.begin(),posRR.end());
 }
+
+
+/* This function adds image of the dataset around the original dataset to simulate periodicity at a certain scale
+*/
+/*
+vector<vector<double> > periodize(vector<vector<double> > pos, double scale=(boxsize/2.0)){
+	
+	vector<vector<double> >  new_pos;
+	for(long i=0;i<pos.size();i++){
+		new_pos.push_back(pos.at(i));
+	}
+	// Expanding in x
+	long len=new_pos.size();
+	vector<double> x;
+	for(long i=0;i<len;i++){
+		x=new_pos.at(i);
+		if(x.at(0)>=scale){
+			vector<double> dummy{x.at(0)-boxsize,x.at(1),x.at(2)};
+			new_pos.push_back(dummy);
+		}
+		if(x.at(0)<=scale){
+			vector<double> dummy{x.at(0)+boxsize,x.at(1),x.at(2)};
+			new_pos.push_back(dummy);
+		}
+	}
+	
+	// Expanding in y
+	len=new_pos.size();
+	for(long i=0;i<len;i++){
+		x=new_pos.at(i);
+		if(x.at(1)>=scale){
+			vector<double> dummy{x.at(0),x.at(1)-boxsize,x.at(2)};
+			new_pos.push_back(dummy);
+		}
+		if(x.at(1)<=scale){
+			vector<double> dummy{x.at(0),x.at(1)+boxsize,x.at(2)};
+			new_pos.push_back(dummy);
+		}
+	}
+
+	// Expanding in z
+	len=new_pos.size();
+	for(long i=0;i<len;i++){
+		x=new_pos.at(i);
+		if(x.at(2)>=scale){
+			vector<double> dummy{x.at(0),x.at(1),x.at(2)-boxsize};
+			new_pos.push_back(dummy);
+		}
+		if(x.at(2)<=scale){
+			vector<double> dummy{x.at(0),x.at(1),x.at(2)+boxsize};
+			new_pos.push_back(dummy);
+		}
+	}
+
+	return new_pos;
+}
+
+*/
 
 /*
 Doing counts using brute force pair counting.
@@ -258,13 +327,13 @@ vector<double> countsBruteForce(vector<vector<double> > positions, vector<vector
 This function calculates 2 point correlation for the given distribution of positions of N points in a cubic box(presumption).
 */
 Correlation twoPtCorrelation(vector<vector<double> > positions, double dR=2.0){
-	cout<<"Starting 2-pt"<<endl;
+	cout<<"Starting 2-pt\n";
 	Correlation result;
 	long long n=positions.size();
 	vector<double> bins;
 	bins=createBins(dR);
 	int m=bins.size();
-	cout<<"Bins created successfully"<<endl;
+	cout<<"Bins created successfully\n";
 
 	vector<long long> countsDD(m-1,0);
 	vector<long long> countsRR(m-1,0);
@@ -273,12 +342,10 @@ Correlation twoPtCorrelation(vector<vector<double> > positions, double dR=2.0){
 	vector<vector<double> > positionsRR;
 	positionsRR.clear();
 	randomDistribution(positionsRR,n);
-	cout<<"Random distribution generated successfully"<<endl;
+	cout<<"Random distribution generated successfully\n";
 
 	// Pair counting Brute Force and Computing 2 point correlation as ordered ratio of (countsDD/countsRR)-1.0
 	result.correlationValue_BF=countsBruteForce(positions,positionsRR,bins,countsDD,countsRR);
-	
-	// Pair counting using some other methods can be inserted here.
 
 	// Centering bins
 	vector<double> centeredBins;
