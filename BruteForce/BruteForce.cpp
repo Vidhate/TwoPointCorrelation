@@ -326,7 +326,8 @@ vector<double> countsBruteForce(vector<vector<double> > positions, vector<vector
 /*
 This function calculates 2 point correlation for the given distribution of positions of N points in a cubic box(presumption).
 */
-Correlation twoPtCorrelation(vector<vector<double> > positions, double dR=2.0){
+//Correlation twoPtCorrelation(vector<vector<double> > positions, double dR=2.0){		// Original
+Correlation twoPtCorrelation(vector<vector<double> > positions, vector<vector<double> > positionsRR, double dR=2.0){			// Inserted
 	cout<<"Starting 2-pt\n";
 	Correlation result;
 	long long n=positions.size();
@@ -339,10 +340,10 @@ Correlation twoPtCorrelation(vector<vector<double> > positions, double dR=2.0){
 	vector<long long> countsRR(m-1,0);
 
 	// Genarting random positions
-	vector<vector<double> > positionsRR;
+/*	vector<vector<double> > positionsRR;			// Original
 	positionsRR.clear();
 	randomDistribution(positionsRR,n);
-	cout<<"Random distribution generated successfully\n";
+	cout<<"Random distribution generated successfully\n";*/
 
 	// Pair counting Brute Force and Computing 2 point correlation as ordered ratio of (countsDD/countsRR)-1.0
 	result.correlationValue_BF=countsBruteForce(positions,positionsRR,bins,countsDD,countsRR);
@@ -379,8 +380,11 @@ int main(){
 	Correlation result[fileNames.size()];
 	for(int i=0;i<fileNames.size();i++){
 		vector<vector<double> > positions;
+		vector<vector<double> > positionsRR;
 		positions=readFile(i);
-		result[i]=twoPtCorrelation(positions);
+		positionsRR=readFile(-1,(path+"RANDOM "+fileNames[i]));	// inserted
+		result[i]=twoPtCorrelation(positions,positionsRR);	// inserted
+//		result[i]=twoPtCorrelation(positions);				// original
 		writeResult(result[i],i);
 	}
 	return 0;
