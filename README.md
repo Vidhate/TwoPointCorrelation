@@ -1,11 +1,13 @@
 # TwoPointCorrelation
 This repository contains multiple codes which calculate the 2 point correlation (DD/RR)-1<br>
 <ul>
+<li><b>"Data"</b> directory contains the data input files used to calculate the 2 point correlations
 <li><b>"BruteForce"</b> directory contains a C++ code developed by me for datasets with small number of points.<br>
 <li><b>"KDTree"</b> directory uses in-built functions in Python imported from Sklearn to do the computations using a KDTree.<br>
 <li><b>"PKDTree"</b> directory uses a modification of the in-built scipy function. Modification done by Patrick Varilly. A few minute commits have been made by me to make the algorithm Python3 compatible (download latest from https://github.com/Vidhate/periodic_kdtree).
 <li><b>"Shadab"</b> directory contains code developed by Shadab Alam to calculate 2 point correlations.<br>
 <li><b>"Comparison Plots"</b> holds 2 types of files. Files without the prefix "set2" are comparisons of Brute Force and KDTree. Files with the prefix "set2" are comparisons of all the 3 methods currently available in the repo.<br>
+  <li><b>"Ratios"</b> directory hosts plots made by finding the ratios of correlation values from different input files. It also contains the ipynb code for plotting the ratios.
 <li><b>"pickleMocks.py"</b> helps to extract positions from the data files and pickle dump them as numpy arrays.<br>
 </ul>
 
