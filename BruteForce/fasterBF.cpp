@@ -402,7 +402,7 @@ int main(){
 		vector<vector<double> > positions;
 		vector<vector<double> > positionsRR;
 		positions=readFile(i);
-		positionsRR=readFile(-1,(path+"RANDOM "+fileNames[i]));	// inserted
+		positionsRR	=readFile(-1,(path+"RANDOM "+fileNames[i]));	// inserted
 		result[i]=twoPtCorrelation(positions,positionsRR);	// inserted
 //		result[i]=twoPtCorrelation(positions);				// original
 		writeResult(result[i],i);
