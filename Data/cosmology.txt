@@ -1,0 +1,18 @@
+# This file should be populated with the Cosmology you wish to use throughout all computations
+
+# Aseem's cosmology
+Omega_m     0.276
+Omega_b     0.045
+Omega_L     0.724
+sigma_8     0.811
+h           0.7
+ns          0.961
+
+# WMAP1 Cosmology
+#Omega_m     0.270
+#Omega_b     0.046
+#Omega_L     0.730
+#sigma_8     0.90
+#h           0.72
+#ns          0.99
+

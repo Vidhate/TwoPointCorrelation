@@ -1,0 +1,12 @@
+# This file contains the parameters for the new mass function, parameterised in terms of the peak height Nu, as described in the Tinker 2010 Bias paper
+# arXiv reference: https://arxiv.org/abs/1001.3162
+# Delta     Alpha   Beta    Gamma   Phi     Eta
+200         0.368   0.589   0.864   -0.729  -0.243
+300         0.363   0.585   0.922   -0.789  -0.261
+400         0.385   0.544   0.987   -0.910  -0.261
+600         0.389   0.543   1.09    -1.05   -0.273
+800         0.393   0.564   1.20    -1.20   -0.278
+1200        0.365   0.623   1.34    -1.26   -0.301
+1600        0.379   0.637   1.50    -1.45   -0.301
+2400        0.355   0.673   1.68    -1.50   -0.319
+3200        0.327   0.702   1.81    -1.49   -0.336
