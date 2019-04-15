@@ -1,11 +1,11 @@
 # TwoPointCorrelation
-This repository contains multiple codes which calculate the 2 point correlation (DD/RR)-1<br>
+This repository contains numerical and analytical calculations to compute 2 point correlations as Xi(r)=n(DD)/n(RR)-1 in the context of Dark Matter Halos and Large Scale Structure in the Universe.<br>
 <ul>
   <li><b>"BruteForce"</b> directory contains a C++ code developed by me for datasets with small number of points.<br></li>
   
   <li><b>"Comparison Plots"</b> holds 2 types of files. Files without the prefix "set2" are comparisons of Brute Force and KDTree. Files with the prefix "set2" are comparisons of all the 3 methods currently available in the repo.<br></li>
   
-  <li><b>"Data"</b> directory contains the data input files used to calculate the 2 point correlations</li>
+  <li><b>"Data"</b> directory contains the data input files used to calculate the 2 point correlations.</li>
   
   <li><b>"KDTree"</b> directory uses in-built functions in Python imported from Sklearn to do the computations using a KDTree. <br></li>
   
@@ -21,7 +21,7 @@ This repository contains multiple codes which calculate the 2 point correlation 
 
 <li><b>"Tinker MF & Bias"</b> houses code to compute the Mass Function and large scale Bias as described by Tinker et.al. in their <a href="https://arxiv.org/abs/0803.2706">Mass Function paper[2008]</a> and their <a href="https://arxiv.org/abs/1001.3162">Bias paper[2010]</a>.</li>
   
-<li><b>"pickleMocks.py"</b> helps to extract positions from the data files and pickle dump them as numpy arrays.<br>
+<li><b>"pickleMocks.py"</b> helps to extract positions from the data files and pickle dump them as numpy arrays.<br></li>
 </ul>
 
 ## Prerequisites
@@ -42,9 +42,8 @@ To run for your own data sets please note the following things:
       >> ./a.out</i>
   </li>
   <li>Rest of the codes can be run in the Jupyter Notebook.</li>
-  <li>Please make sure that the <i>periodic_kdtree</i> repo is available on your system and the path is set properly before running the Jupyter Notebook in the PKDTree directory.</li>
 </ul>
   
 ## Output
-The output of correlation values found from each technique will be stored in the same directory which holds the code in the <i>.txt</i> format, with the same name as the input file name prefixed with an appropriate abbreviation of the technique.<br>
+The output of all the computations will be stored in the same directory which holds the code in the <i>.txt</i> format, with the same name as the input file name prefixed with an appropriate abbreviation of the technique.<br>
 The output of comparison plots is stored in the folder "Comparison Plots". The prefix "setX" can be changed in the code.
