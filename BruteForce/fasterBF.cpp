@@ -11,7 +11,7 @@ using namespace std;
 
 //string path="./../../../DLA Mock Catalogue/";
 string path="./../Data/";
-vector<string> fileNames{"DLAhost_snap49_r1_b1 (copy).txt","DLAhost_snap49_r1_b1alpha (copy).txt","DLAhost_snap49_r1_b1T10 (copy).txt"};
+vector<string> fileNames{"b1.txt","b1alpha.txt","b1T10.txt"};
 double boxsize=150.0;	// Size of the simulation box in MPc/h
 double numPart=1024.0;	// The number of particles used for the simulation will be cube of this number.
 double forceRes=(boxsize/numPart)/30;	// Force resolution used in the simulation is 1/30th of mean inter-particle spacing.

@@ -3,7 +3,7 @@ import numpy as np
 
 #path="./../../DLA Mock Catalogue/"
 path="./Data/"
-names=["DLAhost_snap49_r1_b1 (copy).txt","DLAhost_snap49_r1_b1alpha (copy).txt","DLAhost_snap49_r1_b1T10 (copy).txt"]
+names=["b1.txt","b1alpha.txt","b1T10.txt"]
 
 for name in names:
 	pos=[]
